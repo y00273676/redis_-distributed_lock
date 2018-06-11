@@ -24,6 +24,9 @@ class redis_op(object):
         self._lock = 0
         self._lock_key = f"{redis_key}_lock_key"
 
+    def __getattr__(self, name):
+        return getattr(self.rc, name)
+
     def __enter__(self):
         while not self._lock:
             time_out = time.time() + 10 + 1
@@ -41,7 +44,7 @@ class redis_op(object):
 
 def my_func():
     with redis_op("test") as rp:
-        rp.rc.set("rc1", "11")
+        rp.set("rc1", "11")
 
 if __name__ == "__main__":
     my_func()
